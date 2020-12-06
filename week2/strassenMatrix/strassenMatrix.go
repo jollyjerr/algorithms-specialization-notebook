@@ -4,7 +4,7 @@ import "fmt"
 
 func strassen(left [][]int, right [][]int) [][]int {
 	// Base case
-	if len(left) == 1 {
+	if len(left) <= 1 {
 		return [][]int{
 			{left[0][0] * right[0][0]},
 		}
@@ -13,64 +13,95 @@ func strassen(left [][]int, right [][]int) [][]int {
 	a, b, c, d := split(left)
 	e, f, g, h := split(right)
 
-	fmt.Println(a)
-	fmt.Println(b)
-	fmt.Println(c)
-	fmt.Println(d)
-	fmt.Println(e)
-	fmt.Println(f)
+	fmt.Println(add(a, d))
+	fmt.Println(sub(f, h))
+	fmt.Println(add(a, b))
+	fmt.Println(sub(c, e))
 	fmt.Println(g)
-	fmt.Println(h)
 
-	p1 := strassen(a, sub(f, h))
-	p2 := strassen(add(a, b), h)
-	p3 := strassen(add(c, d), e)
-	p4 := strassen(d, sub(g, e))
-	p5 := strassen(add(a, d), add(e, h))
-	p6 := strassen(sub(b, d), add(g, h))
-	p7 := strassen(sub(a, c), add(e, f))
+	// p1 := strassen(a, sub(f, h))
+	// p2 := strassen(add(a, b), h)
+	// p3 := strassen(add(c, d), e)
+	// p4 := strassen(d, sub(g, e))
+	// p5 := strassen(add(a, d), add(e, h))
+	// p6 := strassen(sub(b, d), add(g, h))
+	// p7 := strassen(sub(a, c), add(e, f))
 
-	fmt.Println(p1)
-	fmt.Println(p2)
-	fmt.Println(p3)
-	fmt.Println(p4)
-	fmt.Println(p5)
-	fmt.Println(p6)
-	fmt.Println(p7)
+	// fmt.Println(p1)
+	// fmt.Println(p2)
+	// fmt.Println(p3)
+	// fmt.Println(p4)
+	// fmt.Println(p5)
+	// fmt.Println(p6)
+	// fmt.Println(p7)
+
+	// half := len(left) / 2
+	// result := makeEmpty2DSlice(len(left))
+
+	// for i := 0; i < half; i++ {
+	// 	for j := 0; j < half; j++ {
+	// 		fmt.Println(result)
+	// 	}
+	// }
 
 	return [][]int{{2}}
 }
 
 func split(matrix [][]int) ([][]int, [][]int, [][]int, [][]int) {
-	rowLen := len(matrix)
+	// We are only working with even matrices
+	height := len(matrix)
+	halfHeight := height / 2
 
-	half := rowLen / 2
+	var (
+		topLeft     = makeEmpty2DSlice(halfHeight)
+		topRight    = makeEmpty2DSlice(halfHeight)
+		bottomLeft  = makeEmpty2DSlice(halfHeight)
+		bottomRight = makeEmpty2DSlice(halfHeight)
+	)
 
-	A := matrix[:half]
-	B := matrix[half:]
+	for i := 0; i < halfHeight; i++ {
+		for j := 0; j < halfHeight; j++ {
+			topLeft[i][j] = matrix[i][j]
+			topRight[i][j] = matrix[i][j+halfHeight]
+			bottomLeft[i][j] = matrix[i+halfHeight][j]
+			bottomRight[i][j] = matrix[i+halfHeight][j+halfHeight]
+		}
+	}
 
-	return [][]int{A[0][:half]}, [][]int{A[0][half:]}, [][]int{B[0][:half]}, [][]int{B[0][half:]}
+	return topLeft, topRight, bottomLeft, bottomRight
 }
 
 func add(left [][]int, right [][]int) [][]int {
-	// res := make([][]int, len(left))
+	half := len(left) / 2
+	res := makeEmpty2DSlice(half)
 
-	for i := 0; i < len(left); i++ {
-		for j := 0; j < len(left); j++ {
-			// res[i][j] = (left[i][j] + right[i][j])
-			// fmt.Println(res)
+	for i := 0; i < half; i++ {
+		for j := 0; j < half; j++ {
+			res[i][j] = (left[i][j] + right[i][j])
 		}
 	}
-	return [][]int{{2}}
+
+	return res
 }
 
 func sub(left [][]int, right [][]int) [][]int {
-	// res := make([][]int, len(left))
-	for i := 0; i < len(left); i++ {
-		for j := 0; j < len(left); j++ {
-			// res[i][j] = (left[i][j] - right[i][j])
-			// fmt.Println(res)
+	half := len(left) / 2
+	res := makeEmpty2DSlice(half)
+
+	for i := 0; i < half; i++ {
+		for j := 0; j < half; j++ {
+			res[i][j] = (left[i][j] - right[i][j])
 		}
 	}
-	return [][]int{{2}}
+
+	return res
+}
+
+// IDK if this is the best way to do this but Go was being silly
+func makeEmpty2DSlice(len int) [][]int {
+	a := make([][]int, len)
+	for i := range a {
+		a[i] = make([]int, len)
+	}
+	return a
 }
