@@ -25,3 +25,5 @@ T(N) is BigOmega(F(N)) if and only if C * F(N) is forevermore below T(N) after N
 Theta means both are true
 
 Little o means all constant C there exists some larger "N not" there is a upper bound C *f(n) for T(N) `strictly less than`
+
+Solid resource on Big O -> http://web.mit.edu/16.070/www/lecture/big_o.pdf
