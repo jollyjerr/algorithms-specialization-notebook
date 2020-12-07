@@ -1,5 +1,13 @@
 package main
 
+import (
+	"encoding/csv"
+	"fmt"
+	"log"
+	"os"
+	"strconv"
+)
+
 // returns (a sorted version of the input array, the number of inversions)
 func countInversions(args []int) ([]int, int) {
 	// Base Case
@@ -47,4 +55,41 @@ func mergeAndCountSplitInv(left []int, right []int) ([]int, int) {
 	}
 
 	return ret, invCount
+}
+
+// Assignment stuff under this comment
+
+func readCsvFile(filePath string) [][]string {
+	f, err := os.Open(filePath)
+	if err != nil {
+		log.Fatal("Unable to read input file "+filePath, err)
+	}
+	defer f.Close()
+
+	csvReader := csv.NewReader(f)
+	records, err := csvReader.ReadAll()
+	if err != nil {
+		log.Fatal("Unable to parse file as CSV for "+filePath, err)
+	}
+
+	return records
+}
+
+func parseInput(csvdata [][]string) []int {
+	res := make([]int, 0)
+	for i := 0; i < len(csvdata); i++ {
+		num := csvdata[i][0]
+		newint, err := strconv.Atoi(num)
+		if err != nil {
+			panic(err)
+		}
+		res = append(res, newint)
+	}
+	return res
+}
+
+func main() {
+	records := readCsvFile("./week2/countInversions/data.csv")
+	_, answer := countInversions(parseInput(records))
+	fmt.Println(answer)
 }
