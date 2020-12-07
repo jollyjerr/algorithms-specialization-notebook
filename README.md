@@ -14,6 +14,8 @@
 
 [Strassen's Subcubic Matrix Multiplication](./week2/strassenMatrix/strassenMatrix.go)
 
+[Quicksort](./week3/quicksort/quicksort.go)
+
 ### Dev docs
 
 Run the full test suite with `go test ./...`
