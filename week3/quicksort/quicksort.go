@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"strconv"
 )
@@ -13,57 +14,53 @@ var (
 )
 
 func quicksort(args []int) []int {
-	if len(args) > 1 { // Only do the work if not a base case
-		leftpoint, rightpoint := 0, len(args)-1
+	if len(args) == 1 { // base case
+		return args
+	}
 
-		// pivot := rand.Intn(rightpoint)
-		// pivot := len(args) - 1
-		pivot := findMedianOfThreePivot(args)
+	comparisons += len(args) - 1
+	leftpoint, rightpoint := 0, len(args)-1
 
-		boundary := swapAroundPivot(args, pivot, leftpoint, rightpoint)
+	pivot := rand.Intn(rightpoint)
+	// pivot := leftpoint
+	// pivot := len(args) - 1
+	// pivot := findMedianOfThreePivot(args)
 
-		comparisons += len(args[:boundary]) - 1
-		comparisons += len(args[boundary:]) - 1
+	boundary := swapAroundPivot(args, pivot, leftpoint, rightpoint)
 
-		quicksort(args[:boundary])
+	if split := boundary - 1; split > 0 {
+		quicksort(args[:boundary-1])
+	}
+	if len(args[boundary:]) > 1 {
 		quicksort(args[boundary:])
 	}
+
 	return args
 }
 
 func swapAroundPivot(elements []int, pivotIndx, leftpoint, rightpoint int) int {
-	pivot := elements[pivotIndx]
-	// pivotBoundary := pivotIndx + 1
-	// fmt.Println(elements[pivotIndx])
-
-	// move pivot to the right so we can iterate over the slice without the pivot
-	// elements[pivotIndx], elements[rightpoint] = elements[rightpoint], elements[pivotIndx]
 
 	if pivotIndx != leftpoint {
 		elements[leftpoint], elements[pivotIndx] = elements[pivotIndx], elements[leftpoint]
 		pivotIndx = leftpoint
 	}
 
-	for i := range elements {
-		if elements[i] < pivot { // the only case when anything needs to happen
-			leftpoint++ // using the leftpoint as the pivotBoundary counter
-			// fmt.Println(elements, elements[i], pivot, leftpoint)
-			elements[i], elements[leftpoint] = elements[leftpoint], elements[i]
+	pivot := elements[pivotIndx]
+	i := leftpoint + 1
+
+	for j := range elements {
+		if j > 0 {
+			if elements[j] < pivot { // the only case when anything needs to happen
+				elements[j], elements[i] = elements[i], elements[j]
+				i++
+			}
 		}
 	}
 
-	// for i := leftpoint; i < rightpoint; i++ {
-	// 	if elements[i] < pivot && pivotBoundary > pivotIndx+1 { // the only case when anything needs to happen. New e needs to be swapped && the pivot boundary has already moved
-	// 		pivotBoundary++
-	// 		elements[pivotBoundary], elements[i] = elements[i], elements[pivotBoundary]
-	// 	}
-	// }
-
 	// swap the pivot element into place
-	// elements[leftpoint], elements[rightpoint] = elements[rightpoint], elements[leftpoint]
-	elements[leftpoint], elements[pivotIndx] = elements[pivotIndx], elements[leftpoint]
+	elements[pivotIndx], elements[i-1] = elements[i-1], elements[pivotIndx]
 
-	return leftpoint + 1
+	return i
 }
 
 // Assignment stuff under this comment
@@ -77,17 +74,17 @@ func findMedianOfThreePivot(args []int) int {
 	)
 
 	if len(args)%2 == 0 {
-		midIndx = len(args)/2 - 1
+		midIndx = (len(args) / 2) - 1
 	} else {
 		midIndx = len(args) / 2
 	}
 	mid = args[midIndx]
 
-	var median = first
-	for _, v := range []int{last, mid} {
-		if v < median {
-			median = v
-		}
+	var median = first // I am sure there is a better way to do this but it is too late for this lol
+	if (mid > first && mid < last) || (mid > last && mid < first) {
+		median = mid
+	} else if (last > mid && last < first) || (last > first && last < mid) {
+		median = last
 	}
 
 	if median == first {
