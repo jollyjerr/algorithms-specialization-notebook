@@ -29,7 +29,7 @@ func quicksort(args []int) []int {
 	boundary := swapAroundPivot(args, pivot, leftpoint, rightpoint)
 
 	if split := boundary - 1; split > 0 {
-		quicksort(args[:boundary-1])
+		quicksort(args[:split])
 	}
 	if len(args[boundary:]) > 1 {
 		quicksort(args[boundary:])
