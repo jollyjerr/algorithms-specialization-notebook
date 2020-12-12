@@ -18,7 +18,7 @@
 
 [Randomized Selection](./week4/randomizedSelection/rSelect.go)
 
-[Randomized Contraction](./week4/randomizedContraction.go)
+[Randomized Contraction](./week4/randomizedContraction/randomizedContraction.go)
 
 ### Dev docs
 
