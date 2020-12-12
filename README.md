@@ -16,6 +16,8 @@
 
 [Quicksort](./week3/quicksort/quicksort.go)
 
+[Randomized Selection](./week4/randomizedSelection/rSelect.go)
+
 ### Dev docs
 
 Run the full test suite with `go test ./...`
