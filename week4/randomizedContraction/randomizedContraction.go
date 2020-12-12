@@ -56,7 +56,7 @@ func findMinCut(graph AdjacencyList) int {
 	bestMinimumCut := numberOfVertices * (numberOfVertices - 1) / 2 // max number of possible edges
 
 	//approx n^2 * log(n)
-	aproxNeededRotations := int((math.Pow(float64(numberOfVertices), 2))*math.Log(float64(numberOfVertices))) * 4000
+	aproxNeededRotations := int((math.Pow(float64(numberOfVertices), 2))*math.Log(float64(numberOfVertices))) * 400000
 
 	for i := 0; i < aproxNeededRotations; i++ {
 		graphCopy := graph
