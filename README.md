@@ -4,7 +4,7 @@
 
 > My notes and assignments for Stanfords "Algorithms Specialization" class on Coursera
 
-There are 4 courses (quarters from the corresponding university course) which each have 4 week-long sections
+There are 4 courses (quarters from the corresponding university course). Each have 4 week-long sections
 
 ## Implementations
 
@@ -23,6 +23,10 @@ There are 4 courses (quarters from the corresponding university course) which ea
 [Randomized Selection](./course1/week4/randomizedSelection/rSelect.go)
 
 [Randomized Contraction](./course1/week4/randomizedContraction/randomizedContraction.go)
+
+### Course 2 - Graph Search, Shortest Paths, and Data Structures
+
+[Breadth First Search](./course2/week1/breadthFirstSearch/breadthFirstSearch.go)
 
 ### Dev docs
 
