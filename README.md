@@ -6,19 +6,21 @@
 
 ## Implementations
 
-[Merge Sort](./week1/mergesort/mergesort.go)
+### Course 1 - Divide and Conquer, Sorting and Searching, and Randomized Algorithms
 
-[Karatsuba Multiplication](./week1/karatsuba/karatsuba.go)
+[Merge Sort](./course1-divide-sorting-searching-randomized/week1/mergesort/mergesort.go)
 
-[Inversion Counter](./week2/countInversions/countInversions.go)
+[Karatsuba Multiplication](./course1-divide-sorting-searching-randomized/week1/karatsuba/karatsuba.go)
 
-[Strassen's Subcubic Matrix Multiplication](./week2/strassenMatrix/strassenMatrix.go)
+[Inversion Counter](./course1-divide-sorting-searching-randomized/week2/countInversions/countInversions.go)
 
-[Quicksort](./week3/quicksort/quicksort.go)
+[Strassen's Subcubic Matrix Multiplication](./course1-divide-sorting-searching-randomized/week2/strassenMatrix/strassenMatrix.go)
 
-[Randomized Selection](./week4/randomizedSelection/rSelect.go)
+[Quicksort](./course1-divide-sorting-searching-randomized/week3/quicksort/quicksort.go)
 
-[Randomized Contraction](./week4/randomizedContraction/randomizedContraction.go)
+[Randomized Selection](./course1-divide-sorting-searching-randomized/week4/randomizedSelection/rSelect.go)
+
+[Randomized Contraction](./course1-divide-sorting-searching-randomized/week4/randomizedContraction/randomizedContraction.go)
 
 ### Dev docs
 
