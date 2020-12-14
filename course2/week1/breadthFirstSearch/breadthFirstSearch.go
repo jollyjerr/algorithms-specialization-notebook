@@ -19,17 +19,6 @@ type Node struct {
 // AdjacencyList is a representation of a graph
 type AdjacencyList map[int]Node
 
-func countUndirectedConnectivity(graph AdjacencyList) int {
-	count := 0
-	for i := 1; i < len(graph); i++ {
-		if !graph[i].explored {
-			breadthFirstSearch(graph, i)
-			count++
-		}
-	}
-	return count
-}
-
 func breadthFirstSearch(graph AdjacencyList, startVertex int) {
 	queue := append(make([]Node, 0, len(graph)), exploredEdition(graph, startVertex))
 

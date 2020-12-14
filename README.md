@@ -28,6 +28,4 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 
 [Breadth First Search](./course2/week1/breadthFirstSearch/breadthFirstSearch.go)
 
-### Dev docs
-
-Run the full test suite with `go test ./...`
+[Undirected Connectivity](./course2/week1/breadthFirstSearch/undirectedConnectivity.go)
