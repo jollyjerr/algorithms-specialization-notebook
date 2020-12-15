@@ -29,3 +29,5 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 [Breadth First Search](./course2/week1/breadthFirstSearch/breadthFirstSearch.go)
 
 [Undirected Connectivity](./course2/week1/breadthFirstSearch/undirectedConnectivity.go)
+
+[Kosaraju Two Pass and Depth First Search](./course2/week1/depthFirstSearch/kosarajuTwoPass.go)
