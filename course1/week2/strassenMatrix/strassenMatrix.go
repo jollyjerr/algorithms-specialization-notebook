@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 func strassen(left [][]int, right [][]int) [][]int {
 	// Base case
 	if len(left) <= 1 {
@@ -10,14 +8,10 @@ func strassen(left [][]int, right [][]int) [][]int {
 		}
 	}
 
-	a, b, c, d := split(left)
-	e, f, g, h := split(right)
+	// TODO this still has some bugs
 
-	fmt.Println(add(a, d))
-	fmt.Println(sub(f, h))
-	fmt.Println(add(a, b))
-	fmt.Println(sub(c, e))
-	fmt.Println(g)
+	// a, b, c, d := split(left)
+	// e, f, g, h := split(right)
 
 	// p1 := strassen(a, sub(f, h))
 	// p2 := strassen(add(a, b), h)

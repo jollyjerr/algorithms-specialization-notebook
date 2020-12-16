@@ -22,18 +22,10 @@ type Node struct {
 type Graph map[int]Node
 
 func kosarajuTwoPass(graph Graph) []int {
-	fmt.Println("Transposing graph...")
 	transposedGraph := transposeGraph(graph)
-	fmt.Println("Done.")
-	fmt.Println("First DFS Loop...")
 	order := dfsLoop(transposedGraph, 1)
-	fmt.Println("Done.")
-	fmt.Println("Switching node names")
 	graph = switchNodeNamesWithIndexInOrder(graph, order)
-	fmt.Println("Done.")
-	fmt.Println("Second DFS Loop...")
 	leaders := dfsLoop(graph, 2)
-	fmt.Println("Done.")
 	return leaders
 }
 
