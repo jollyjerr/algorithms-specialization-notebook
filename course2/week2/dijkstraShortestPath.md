@@ -39,7 +39,7 @@ Heap structure can reduce runtime
 
 Conceptually: A perfectly balanced binary tree
 
-Heap Property: at every node, key <= children's keys
+Heap Property (min tree): at every node, key <>= children's keys
 
 Extract min by swapping up last leaf and bubbling down and insert by bubbling up `O(mlogn)`
 
