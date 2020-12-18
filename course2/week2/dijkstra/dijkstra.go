@@ -1,4 +1,4 @@
-package main
+package old_dijkstra
 
 import (
 	"bufio"
@@ -40,7 +40,7 @@ func (graph Graph) keys() []int {
 	return keys
 }
 
-func dijkstra(graph Graph) []int {
+func dijkstra(graph Graph) Heap {
 	heap := Heap{
 		size:      len(graph),
 		array:     make([]Node, 0, len(graph)),
@@ -54,15 +54,19 @@ func dijkstra(graph Graph) []int {
 	heap.decreaseKey(0, 0)
 
 	for !heap.isEmpty() {
+		fmt.Println(heap.size)
 		node := heap.extractMin()
+		// fmt.Println(node)
 		for _, edge := range node.edges {
 			if heap.isNodeInMinHeap(edge.head) {
-				heap.decreaseKey(edge.head, edge.weight)
+				if distance := edge.weight + node.shortestPathFromS; distance < graph[edge.head].shortestPathFromS {
+					heap.decreaseKey(edge.head, distance)
+				}
 			}
 		}
 	}
 
-	return heap.positions
+	return heap
 }
 
 func main() {
@@ -124,15 +128,14 @@ func (heap *Heap) extractMin() Node {
 	}
 
 	root := heap.array[0]
-	lastNode := heap.array[len(heap.array)-1]
+	// lastNode := heap.array[len(heap.array)-1]
 
 	// move the last node into root position
-	heap.array[0] = heap.array[len(heap.array)-1]
-	heap.array[len(heap.array)-1] = Node{}
+	heap.swap(0, len(heap.array)-1)
 
 	// update positions mapping
-	heap.positions[lastNode.vertex] = 0
-	heap.positions[root.vertex] = heap.size - 1
+	// heap.positions[lastNode.vertex] = 0
+	// heap.positions[root.vertex] = heap.size - 1
 
 	heap.size--
 	heap.minHeapifyDown(0)
@@ -147,7 +150,6 @@ func (heap *Heap) isEmpty() bool {
 
 // Check if vertex has been pulled out of heap and discovered
 func (heap *Heap) isNodeInMinHeap(vertex int) bool {
-	fmt.Println(vertex)
 	return heap.positions[vertex] < heap.size
 }
 
