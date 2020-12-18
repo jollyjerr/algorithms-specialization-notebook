@@ -124,9 +124,12 @@ func setDistance(node Node, distance int) Node {
 }
 
 func main() {
-	result := dijkstra(loadData("./course2/week2/dijkstra/smallData.txt"))
+	result := dijkstra(loadData("./course2/week2/dijkstra/largerData.txt"))
 
-	fmt.Println(result[0], result[4])
+	// shortest-path distances to the following ten vertices, in order: 7,37,59,82,99,115,133,165,188,197.
+	for _, v := range []int{7, 37, 59, 82, 99, 115, 133, 165, 188, 197} {
+		fmt.Println(result[v-1].vertex, result[v-1].shortestPathFromS)
+	}
 }
 
 func loadData(filepath string) Graph {
