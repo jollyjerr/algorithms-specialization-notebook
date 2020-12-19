@@ -1,4 +1,4 @@
-package old_dijkstra
+package main
 
 import (
 	"bufio"
@@ -25,6 +25,23 @@ type Node struct {
 	visited           bool
 }
 
+func (n *Node) edgeHeads() []int {
+	edgeheads := make([]int, 0, len(n.edges))
+	for _, edge := range n.edges {
+		edgeheads = append(edgeheads, edge.head)
+	}
+	return edgeheads
+}
+
+func (n *Node) getEdgeWeight(node Node) int {
+	for _, edge := range n.edges {
+		if edge.head == node.vertex {
+			return edge.weight
+		}
+	}
+	return -1
+}
+
 // Graph is an adjacency list representation of a graph
 type Graph map[int]Node
 
@@ -40,135 +57,106 @@ func (graph Graph) keys() []int {
 	return keys
 }
 
-func dijkstra(graph Graph) Heap {
-	heap := Heap{
-		size:      len(graph),
-		array:     make([]Node, 0, len(graph)),
-		positions: make([]int, 0, len(graph)),
+func dijkstra(graph Graph) Graph {
+	graph[0] = setDistance(graph[0], 0)
+
+	visited := make(Tvisited, 0, len(graph))
+	visited = append(visited, graph[0])
+
+	for len(visited) < len(graph) {
+
+		edgesToAdd := visited.findEdgesToAdd(graph)
+
+		scores := make(map[int]Node)
+
+		for _, target := range edgesToAdd {
+			score := visited.computeGreedyScore(target)
+			scores[score] = target
+		}
+
+		lowestScore := 10000000
+		for score := range scores {
+			if score < lowestScore {
+				lowestScore = score
+			}
+		}
+
+		target := scores[lowestScore]
+		graph[target.vertex] = setDistance(target, lowestScore)
+		visited = append(visited, graph[target.vertex])
+
+		// for _, suspect := range visited {
+		// 	for _, edge := range suspect.edges {
+		// 		if nodeToAdd := graph[edge.head]; !visited.isNodeVisited(nodeToAdd) {
+		// 			score := visited.computeGreedyScore(nodeToAdd)
+		// 			graph[nodeToAdd.vertex] = setDistance(nodeToAdd, score)
+		// 			visited = append(visited, graph[nodeToAdd.vertex])
+		// 		}
+		// 	}
+		// }
 	}
 
-	for key := range graph.keys() {
-		heap.addNode(graph[key], key)
+	return graph
+}
+
+// Tvisited is a list of visited nodes
+type Tvisited []Node
+
+func (visited *Tvisited) isNodeVisited(node Node) bool {
+	for _, v := range *visited {
+		if v.vertex == node.vertex {
+			return true
+		}
 	}
+	return false
+}
 
-	heap.decreaseKey(0, 0)
-
-	for !heap.isEmpty() {
-		fmt.Println(heap.size)
-		node := heap.extractMin()
-		// fmt.Println(node)
-		for _, edge := range node.edges {
-			if heap.isNodeInMinHeap(edge.head) {
-				if distance := edge.weight + node.shortestPathFromS; distance < graph[edge.head].shortestPathFromS {
-					heap.decreaseKey(edge.head, distance)
-				}
+func (visited *Tvisited) findEdgesToAdd(graph Graph) []Node {
+	targets := make([]Node, 0)
+	for _, suspect := range *visited {
+		for _, edge := range suspect.edges {
+			if nodeToAdd := graph[edge.head]; !visited.isNodeVisited(nodeToAdd) {
+				targets = append(targets, nodeToAdd)
 			}
 		}
 	}
+	return targets
+}
 
-	return heap
+func (visited *Tvisited) computeGreedyScore(node Node) int {
+	greedyScore := 10000000
+	suspects := make(Tvisited, 0, len(*visited))
+	for _, suspect := range *visited {
+		if contains(suspect.edgeHeads(), node.vertex) {
+			suspects = append(suspects, suspect)
+		}
+	}
+	for _, suspect := range suspects {
+		if weight := suspect.getEdgeWeight(node) + suspect.shortestPathFromS; weight < greedyScore {
+			greedyScore = weight
+		}
+	}
+
+	if greedyScore == 10000000 {
+		log.Panicln(greedyScore)
+	}
+
+	return greedyScore
+}
+
+func setDistance(node Node, distance int) Node {
+	node.shortestPathFromS = distance
+	return node
 }
 
 func main() {
-	fmt.Println(dijkstra(loadData("./course2/week2/dijkstra/smallData.txt")))
-}
+	result := dijkstra(loadData("./course2/week2/dijkstra/data.txt"))
 
-//************************************************************************************ Heap
-
-// Heap is a priority queue and api for dijkstra's loop
-type Heap struct {
-	size      int
-	array     []Node
-	positions []int
-}
-
-func (heap *Heap) addNode(node Node, position int) {
-	heap.array = append(heap.array, node)
-	heap.positions = append(heap.positions, position)
-}
-
-func (heap *Heap) swap(i1, i2 int) {
-	heap.positions[i1], heap.positions[i2] = i2, i1
-	heap.array[i1], heap.array[i2] = heap.array[i2], heap.array[i1]
-}
-
-func (heap *Heap) minHeapifyDown(index int) {
-	parent := index
-	left, right := left(index), right(index)
-
-	if heap.array[left].shortestPathFromS < heap.array[parent].shortestPathFromS {
-		parent = left
-	}
-	if heap.array[right].shortestPathFromS < heap.array[parent].shortestPathFromS {
-		parent = right
-	}
-
-	if parent != index {
-		heap.swap(parent, index)
-		heap.minHeapifyDown(parent)
+	// shortest-path distances to the following ten vertices, in order: 7,37,59,82,99,115,133,165,188,197.
+	for _, v := range []int{7, 37, 59, 82, 99, 115, 133, 165, 188, 197} {
+		fmt.Println(result[v-1].shortestPathFromS)
 	}
 }
-
-func (heap *Heap) minHeapifyUp(index int) {
-	for heap.array[parent(index)].shortestPathFromS > heap.array[index].shortestPathFromS {
-		heap.swap(index, parent(index))
-		index = parent(index)
-	}
-}
-
-func (heap *Heap) decreaseKey(vertex, distance int) {
-	index := heap.positions[vertex]
-	heap.array[index].shortestPathFromS = distance
-	heap.minHeapifyUp(index)
-}
-
-func (heap *Heap) extractMin() Node {
-	if heap.isEmpty() {
-		return Node{}
-	}
-
-	root := heap.array[0]
-	// lastNode := heap.array[len(heap.array)-1]
-
-	// move the last node into root position
-	heap.swap(0, len(heap.array)-1)
-
-	// update positions mapping
-	// heap.positions[lastNode.vertex] = 0
-	// heap.positions[root.vertex] = heap.size - 1
-
-	heap.size--
-	heap.minHeapifyDown(0)
-
-	return root
-}
-
-// check if heap is empty
-func (heap *Heap) isEmpty() bool {
-	return heap.size == 0
-}
-
-// Check if vertex has been pulled out of heap and discovered
-func (heap *Heap) isNodeInMinHeap(vertex int) bool {
-	return heap.positions[vertex] < heap.size
-}
-
-// get the parent index
-func parent(i int) int {
-	return (i - 1) / 2
-}
-
-// get the left child index
-func left(i int) int {
-	return 2*i + 1
-}
-
-// get the right child index
-func right(i int) int {
-	return 2*i + 2
-}
-
-//************************************************************************************ Assignment stuff
 
 func loadData(filepath string) Graph {
 	data := Graph{}
@@ -217,4 +205,13 @@ func check(err error) {
 	if err != nil {
 		log.Panicln(err)
 	}
+}
+
+func contains(s []int, e int) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }

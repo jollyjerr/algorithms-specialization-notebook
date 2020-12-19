@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func TestSimpleCase(t *testing.T) {
-	if res := 3; res != 3 {
-		t.Error(res)
+	if result := dijkstra(loadData("./smallData.txt")); result[4].shortestPathFromS != 4 {
+		t.Error(result)
 	}
 }
