@@ -64,28 +64,15 @@ func dijkstra(graph Graph) Graph {
 	visited = append(visited, graph[0])
 
 	for len(visited) < len(graph) {
-		// greedyWinner := Edge{
-		// 	head:   0,
-		// 	weight: 10000000000000,
-		// }
-		// primeSuspect := Node{}
-
 		for _, suspect := range visited {
 			for _, edge := range suspect.edges {
 				if nodeToAdd := graph[edge.head]; !visited.isNodeVisited(nodeToAdd) {
-					// if (edge.weight + suspect.shortestPathFromS) < (greedyWinner.weight + suspect.shortestPathFromS) {
-					// 	primeSuspect = suspect
-					// 	greedyWinner = edge
-					// }
 					score := visited.computeGreedyScore(nodeToAdd)
 					graph[nodeToAdd.vertex] = setDistance(nodeToAdd, score)
 					visited = append(visited, graph[nodeToAdd.vertex])
 				}
 			}
 		}
-
-		// graph[greedyWinner.head] = setDistance(graph[greedyWinner.head], greedyWinner.weight+primeSuspect.shortestPathFromS)
-		// visited = append(visited, graph[greedyWinner.head])
 	}
 
 	return graph
@@ -103,7 +90,7 @@ func (visited *Tvisited) isNodeVisited(node Node) bool {
 }
 
 func (visited *Tvisited) computeGreedyScore(node Node) int {
-	greedyScore := node.shortestPathFromS
+	greedyScore := 10000000
 	suspects := make(Tvisited, 0, len(*visited))
 	for _, suspect := range *visited {
 		if contains(suspect.edgeHeads(), node.vertex) {
@@ -115,6 +102,11 @@ func (visited *Tvisited) computeGreedyScore(node Node) int {
 			greedyScore = weight
 		}
 	}
+
+	if greedyScore == 10000000 {
+		log.Panicln(greedyScore)
+	}
+
 	return greedyScore
 }
 
