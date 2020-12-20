@@ -35,3 +35,5 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 [Dijkstra's Shortest Path](./course2/week2/dijkstra/dijkstra.go)
 
 [Median Maintenance](./course2/week3/medianMaintenance/medianMaintenance.go)
+
+[Two Sum via Hash Map](./course2/week4/twoSum/twoSum.go)
