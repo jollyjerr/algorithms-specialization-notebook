@@ -33,3 +33,5 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 [Kosaraju Two Pass and Depth First Search](./course2/week1/depthFirstSearch/kosarajuTwoPass.go)
 
 [Dijkstra's Shortest Path](./course2/week2/dijkstra/dijkstra.go)
+
+[Median Maintenance](./course2/week3/medianMaintenance/medianMaintenance.go)

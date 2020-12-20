@@ -7,33 +7,85 @@ import (
 	"os"
 	"strconv"
 
-	rbt "github.com/emirpasic/gods/trees/redblacktree"
+	"github.com/emirpasic/gods/trees/binaryheap"
+	"github.com/emirpasic/gods/utils"
 )
 
-// find the sum of all medians over the course of inserting data one at a time
+// find the sum of all medians over the course of each step of inserting data one at a time in O(logn)
 func medianMaintenance(list []int) int {
-
-	tree := rbt.NewWithIntComparator()
-
 	sum := 0
 
-	for i, val := range list {
-		tree.Put(i, val)
-		fmt.Println(tree.Values()...)
-		if size := tree.Size(); size%2 != 0 {
-			mid, _ := tree.Get(size / 2)
-			fmt.Println(mid)
-			sum += mid.(int)
-		}
+	maxHeap := binaryheap.NewWithIntComparator()
+	inverseIntComparator := func(a, b interface{}) int {
+		return -utils.IntComparator(a, b)
+	}
+	minHeap := binaryheap.NewWith(inverseIntComparator)
 
-		// sum += tree.Root.Value.(int)
+	for i, val := range list {
+		if i == 0 {
+			minHeap.Push(val)
+			sum += val
+			// fmt.Println(val)
+		} else if i == 1 {
+			min, _ := minHeap.Peek()
+			if val > min.(int) {
+				maxHeap.Push(val)
+			} else {
+				max, _ := minHeap.Pop()
+				maxHeap.Push(max)
+				minHeap.Push(val)
+			}
+			min, _ = minHeap.Peek()
+			sum += min.(int)
+			// fmt.Println(min)
+		} else {
+			roundWinner := val
+
+			bigMin, _ := minHeap.Peek()
+			smallMax, _ := maxHeap.Peek()
+
+			minHeapSize := minHeap.Size()
+			maxHeapSize := maxHeap.Size()
+
+			if bigMin.(int) < val && val < smallMax.(int) {
+				if minHeapSize > maxHeapSize {
+					maxHeap.Push(val)
+				} else {
+					minHeap.Push(val)
+				}
+			} else if val > smallMax.(int) {
+				if maxHeapSize > minHeapSize {
+					smallMax, _ = maxHeap.Pop()
+					minHeap.Push(smallMax)
+				}
+				maxHeap.Push(val)
+			} else if val < bigMin.(int) {
+				if minHeapSize > maxHeapSize {
+					bigMin, _ = minHeap.Pop()
+					maxHeap.Push(bigMin)
+				}
+				minHeap.Push(val)
+			}
+
+			if minHeap.Size() < maxHeap.Size() {
+				winner, _ := maxHeap.Peek()
+				roundWinner = winner.(int)
+			} else {
+				bigMin, _ = minHeap.Peek()
+				roundWinner = bigMin.(int)
+			}
+
+			// fmt.Println(roundWinner, minHeap.Values(), maxHeap.Values(), i%2)
+
+			sum += roundWinner
+		}
 	}
 
 	return sum % 10000
 }
 
 func main() {
-	fmt.Println(medianMaintenance(loadData("./course2/week3/medianMaintenance/smallData.txt")))
+	fmt.Println(medianMaintenance(loadData("./course2/week3/medianMaintenance/data.txt")))
 }
 
 func loadData(filepath string) []int {
