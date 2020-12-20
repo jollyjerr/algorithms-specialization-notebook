@@ -37,3 +37,5 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 [Median Maintenance](./course2/week3/medianMaintenance/medianMaintenance.go)
 
 [Two Sum via Hash Map](./course2/week4/twoSum/twoSum.go)
+
+### Course 3 - Greedy Algorithms, Minimum Spanning Trees, and Dynamic Programming
