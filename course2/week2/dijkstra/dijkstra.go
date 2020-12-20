@@ -84,16 +84,6 @@ func dijkstra(graph Graph) Graph {
 		target := scores[lowestScore]
 		graph[target.vertex] = setDistance(target, lowestScore)
 		visited = append(visited, graph[target.vertex])
-
-		// for _, suspect := range visited {
-		// 	for _, edge := range suspect.edges {
-		// 		if nodeToAdd := graph[edge.head]; !visited.isNodeVisited(nodeToAdd) {
-		// 			score := visited.computeGreedyScore(nodeToAdd)
-		// 			graph[nodeToAdd.vertex] = setDistance(nodeToAdd, score)
-		// 			visited = append(visited, graph[nodeToAdd.vertex])
-		// 		}
-		// 	}
-		// }
 	}
 
 	return graph
