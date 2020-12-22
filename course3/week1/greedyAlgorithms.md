@@ -38,7 +38,7 @@ A jobs `completion time` is the length of itself plus all other jobs that came b
 
 An `objective function` decides what to prioritize. One popular one is to minimize the `sum of completion times * their weight`
 
-Note: Order by decreasing ratio `weight/length` (decrese to ratios and then sort by ratio)
+Note: Order by decreasing ratio `weight/length` (decrease to ratios and then sort by ratio)
 
 ## Building a greedy solution
 
