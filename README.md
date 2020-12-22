@@ -39,3 +39,7 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 [Two Sum via Hash Map](./course2/week4/twoSum/twoSum.go)
 
 ### Course 3 - Greedy Algorithms, Minimum Spanning Trees, and Dynamic Programming
+
+[Job Scheduling and minimize weighted sum of completion times](./course3/week1/schedulingJobs/schedulingJobs.go)
+
+[Prim's minimum spanning tree](./course3/week1/prim/prim.go)
