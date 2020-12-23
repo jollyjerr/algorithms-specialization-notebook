@@ -65,7 +65,7 @@ func (br byRatio) Less(i, j int) bool { return br[i].ratio > br[j].ratio }
 func (br byRatio) Swap(i, j int)      { br[i], br[j] = br[j], br[i] }
 
 func main() {
-	fmt.Println(scheduleJobs(loadData("./course3/week1/schedulingJobs/data.txt"), false)) // 1. 69119377652, 2. 67311454237
+	fmt.Println(scheduleJobs(loadData("./course3/week1/schedulingJobs/data.txt"), false))
 }
 
 func loadData(filepath string) []job {
