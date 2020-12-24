@@ -43,3 +43,5 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 [Job Scheduling and minimize weighted sum of completion times](./course3/week1/schedulingJobs/schedulingJobs.go)
 
 [Prim's minimum spanning tree](./course3/week1/prim/prim.go)
+
+### Course 4 - Shortest Paths Revisited, NP-Complete Problems and What To Do About Them
