@@ -44,4 +44,6 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 
 [Prim's minimum spanning tree](./course3/week1/prim/prim.go)
 
+[Max-Spacing k-clusterings via kruskal's algorithm](./course3/week2/cluster/cluster.go)
+
 ### Course 4 - Shortest Paths Revisited, NP-Complete Problems and What To Do About Them
