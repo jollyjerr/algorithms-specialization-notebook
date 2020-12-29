@@ -33,25 +33,25 @@ type Group struct {
 
 // UnionFind supports find and union opperations
 type UnionFind struct {
-	allNodes map[int]*Node
+	allNodes []Node
 	groups   map[int]Group
 }
 
 func (u UnionFind) init(edges *EdgeList) {
 	for _, edge := range *edges {
 		if _, exist := u.groups[edge.node1.vertex]; !exist {
+			u.allNodes[edge.node1.vertex] = edge.node1
 			u.groups[edge.node1.vertex] = Group{
 				size:  1,
-				nodes: []*Node{&edge.node1},
+				nodes: []*Node{&u.allNodes[edge.node1.vertex]},
 			}
-			u.allNodes[edge.node1.vertex] = &edge.node1
 		}
 		if _, exist := u.groups[edge.node2.vertex]; !exist {
+			u.allNodes[edge.node2.vertex] = edge.node2
 			u.groups[edge.node2.vertex] = Group{
 				size:  1,
-				nodes: []*Node{&edge.node2},
+				nodes: []*Node{&u.allNodes[edge.node2.vertex]},
 			}
-			u.allNodes[edge.node2.vertex] = &edge.node2
 		}
 	}
 }
@@ -82,14 +82,16 @@ func (u UnionFind) union(leader1, leader2 int) {
 
 func kClusterings(edges EdgeList, numberOfClustersDesired int) int {
 	uf := UnionFind{
-		allNodes: make(map[int]*Node),
+		allNodes: make([]Node, len(edges)),
 		groups:   make(map[int]Group),
 	}
 	uf.init(&edges)
 	uf.union(499, 500)
 	uf.union(498, 500)
-	fmt.Println(uf)
+	// fmt.Println(uf)
 	fmt.Println(uf.find(498))
+	fmt.Println(uf.find(499))
+	fmt.Println(uf.find(402))
 	return 2
 }
 
