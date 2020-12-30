@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -33,12 +34,13 @@ type Group struct {
 
 // UnionFind supports find and union opperations
 type UnionFind struct {
-	allNodes []Node
-	groups   map[int]Group
+	allNodes   []Node
+	groups     map[int]Group
+	groupsSize int
 }
 
-func (u UnionFind) init(edges *EdgeList) {
-	for _, edge := range *edges {
+func (u UnionFind) init(edges EdgeList) int {
+	for _, edge := range edges {
 		if _, exist := u.groups[edge.node1.vertex]; !exist {
 			u.allNodes[edge.node1.vertex] = edge.node1
 			u.groups[edge.node1.vertex] = Group{
@@ -54,13 +56,14 @@ func (u UnionFind) init(edges *EdgeList) {
 			}
 		}
 	}
+	return len(u.groups)
 }
 
 func (u *UnionFind) find(vertex int) int {
 	return u.allNodes[vertex].leader
 }
 
-func (u UnionFind) union(leader1, leader2 int) {
+func (u *UnionFind) union(leader1, leader2 int) {
 	if group1, group2 := u.groups[leader1], u.groups[leader2]; group1.size > group2.size {
 		for _, node := range group2.nodes {
 			node.leader = leader1
@@ -69,6 +72,7 @@ func (u UnionFind) union(leader1, leader2 int) {
 		group1.size = len(group1.nodes)
 		u.groups[leader1] = group1
 		delete(u.groups, leader2)
+		u.groupsSize--
 	} else {
 		for _, node := range group1.nodes {
 			node.leader = leader2
@@ -77,22 +81,35 @@ func (u UnionFind) union(leader1, leader2 int) {
 		group2.size = len(group2.nodes)
 		u.groups[leader2] = group2
 		delete(u.groups, leader1)
+		u.groupsSize--
 	}
 }
 
 func kClusterings(edges EdgeList, numberOfClustersDesired int) int {
+	sort.Slice(edges, func(i, j int) bool {
+		return edges[i].cost < edges[j].cost
+	})
 	uf := UnionFind{
-		allNodes: make([]Node, len(edges)),
+		allNodes: make([]Node, len(edges)), // hmm....
 		groups:   make(map[int]Group),
 	}
-	uf.init(&edges)
-	uf.union(499, 500)
-	uf.union(498, 500)
-	// fmt.Println(uf)
-	fmt.Println(uf.find(498))
-	fmt.Println(uf.find(499))
-	fmt.Println(uf.find(402))
-	return 2
+	uf.groupsSize = uf.init(edges)
+
+	clusterAns := 0
+	responseTree := EdgeList{}
+	for i := 1; i < len(edges); i++ {
+		if uf.find(edges[i].node1.vertex) != uf.find(edges[i].node2.vertex) {
+			fmt.Println(uf.groupsSize)
+			if uf.groupsSize == numberOfClustersDesired {
+				clusterAns = edges[i].cost
+				log.Fatal(clusterAns)
+			}
+			responseTree = append(responseTree, edges[i])
+			uf.union(edges[i].node1.vertex, edges[i].node2.vertex)
+		}
+	}
+
+	return clusterAns
 }
 
 func main() {
