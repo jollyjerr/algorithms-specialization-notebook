@@ -34,9 +34,8 @@ type Group struct {
 
 // UnionFind supports find and union opperations
 type UnionFind struct {
-	allNodes   []Node
-	groups     map[int]Group
-	groupsSize int
+	allNodes []Node
+	groups   map[int]Group
 }
 
 func (u UnionFind) init(edges EdgeList) int {
@@ -56,6 +55,7 @@ func (u UnionFind) init(edges EdgeList) int {
 			}
 		}
 	}
+	fmt.Println(u.groups)
 	return len(u.groups)
 }
 
@@ -65,6 +65,7 @@ func (u *UnionFind) find(vertex int) int {
 
 func (u *UnionFind) union(leader1, leader2 int) {
 	if group1, group2 := u.groups[leader1], u.groups[leader2]; group1.size > group2.size {
+		// fmt.Println(group1, group2)
 		for _, node := range group2.nodes {
 			node.leader = leader1
 		}
@@ -72,7 +73,6 @@ func (u *UnionFind) union(leader1, leader2 int) {
 		group1.size = len(group1.nodes)
 		u.groups[leader1] = group1
 		delete(u.groups, leader2)
-		u.groupsSize--
 	} else {
 		for _, node := range group1.nodes {
 			node.leader = leader2
@@ -81,8 +81,17 @@ func (u *UnionFind) union(leader1, leader2 int) {
 		group2.size = len(group2.nodes)
 		u.groups[leader2] = group2
 		delete(u.groups, leader1)
-		u.groupsSize--
 	}
+}
+
+func (u *UnionFind) groupsSize() int {
+	count := 0
+	for _, group := range u.groups {
+		if group.size > 0 {
+			count++
+		}
+	}
+	return count
 }
 
 func kClusterings(edges EdgeList, numberOfClustersDesired int) int {
@@ -93,17 +102,22 @@ func kClusterings(edges EdgeList, numberOfClustersDesired int) int {
 		allNodes: make([]Node, len(edges)), // hmm....
 		groups:   make(map[int]Group),
 	}
-	uf.groupsSize = uf.init(edges)
+	uf.init(edges)
 
 	clusterAns := 0
 	responseTree := EdgeList{}
 	for i := 1; i < len(edges); i++ {
 		if uf.find(edges[i].node1.vertex) != uf.find(edges[i].node2.vertex) {
-			fmt.Println(uf.groupsSize)
-			if uf.groupsSize == numberOfClustersDesired {
+			// fmt.Println(edges[i].node1, edges[i].node2)
+			if uf.groupsSize() == numberOfClustersDesired {
 				clusterAns = edges[i].cost
+				// fmt.Println(uf.groups)
+				// fmt.Println(uf.allNodes)
 				log.Fatal(clusterAns)
 			}
+			// if edges[i].cost == 90 {
+			// 	log.Fatal(edges[i], "and", len(uf.groups))
+			// }
 			responseTree = append(responseTree, edges[i])
 			uf.union(edges[i].node1.vertex, edges[i].node2.vertex)
 		}
@@ -113,7 +127,7 @@ func kClusterings(edges EdgeList, numberOfClustersDesired int) int {
 }
 
 func main() {
-	fmt.Println(kClusterings(loadData("./course3/week2/cluster/data.txt"), 4))
+	fmt.Println(kClusterings(loadData("./course3/week2/cluster/smallData.txt"), 4))
 }
 
 func loadData(filepath string) EdgeList {
