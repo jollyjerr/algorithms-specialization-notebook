@@ -12,122 +12,103 @@ import (
 
 // Edge is an edge
 type Edge struct {
-	node1 Node
-	node2 Node
+	node1 int
+	node2 int
 	cost  int
 }
 
 // EdgeList is an edge list
 type EdgeList []Edge
 
-// Node is a node
-type Node struct {
-	vertex int
-	leader int
-}
-
-// Group is a group
-type Group struct {
-	size  int
-	nodes []*Node
-}
-
-// UnionFind supports find and union opperations
+// UnionFind is the union find
 type UnionFind struct {
-	allNodes []Node
-	groups   map[int]Group
+	root []int
+	size []int
 }
 
-func (u UnionFind) init(edges EdgeList) int {
-	for _, edge := range edges {
-		if _, exist := u.groups[edge.node1.vertex]; !exist {
-			u.allNodes[edge.node1.vertex] = edge.node1
-			u.groups[edge.node1.vertex] = Group{
-				size:  1,
-				nodes: []*Node{&u.allNodes[edge.node1.vertex]},
-			}
-		}
-		if _, exist := u.groups[edge.node2.vertex]; !exist {
-			u.allNodes[edge.node2.vertex] = edge.node2
-			u.groups[edge.node2.vertex] = Group{
-				size:  1,
-				nodes: []*Node{&u.allNodes[edge.node2.vertex]},
-			}
-		}
+func (uf *UnionFind) init(size int) *UnionFind {
+	uf = new(UnionFind)
+	uf.root = make([]int, size)
+	uf.size = make([]int, size)
+
+	for i := 0; i < size; i++ {
+		uf.root[i] = i
+		uf.size[i] = 1
 	}
-	fmt.Println(u.groups)
-	return len(u.groups)
+
+	return uf
 }
 
-func (u *UnionFind) find(vertex int) int {
-	return u.allNodes[vertex].leader
-}
+func (uf *UnionFind) union(p int, q int) {
+	qRoot := uf.find(q)
+	pRoot := uf.find(p)
 
-func (u *UnionFind) union(leader1, leader2 int) {
-	if group1, group2 := u.groups[leader1], u.groups[leader2]; group1.size > group2.size {
-		// fmt.Println(group1, group2)
-		for _, node := range group2.nodes {
-			node.leader = leader1
-		}
-		group1.nodes = append(group1.nodes, group2.nodes...)
-		group1.size = len(group1.nodes)
-		u.groups[leader1] = group1
-		delete(u.groups, leader2)
+	if uf.size[qRoot] < uf.size[pRoot] {
+		uf.root[qRoot] = uf.root[pRoot]
+		uf.size[pRoot] += uf.size[qRoot]
 	} else {
-		for _, node := range group1.nodes {
-			node.leader = leader2
-		}
-		group2.nodes = append(group2.nodes, group1.nodes...)
-		group2.size = len(group2.nodes)
-		u.groups[leader2] = group2
-		delete(u.groups, leader1)
+		uf.root[pRoot] = uf.root[qRoot]
+		uf.size[qRoot] += uf.size[pRoot]
 	}
 }
 
-func (u *UnionFind) groupsSize() int {
-	count := 0
-	for _, group := range u.groups {
-		if group.size > 0 {
-			count++
-		}
+func (uf *UnionFind) find(p int) int {
+	if p > len(uf.root)-1 {
+		return -1
 	}
-	return count
+
+	for uf.root[p] != p {
+		// Path compression
+		// Make every other node in path point to its grandparent (thereby halving path length)
+		uf.root[p] = uf.root[uf.root[p]]
+		p = uf.root[p]
+	}
+
+	return p
 }
 
-func kClusterings(edges EdgeList, numberOfClustersDesired int) int {
+func (uf *UnionFind) connected(p int, q int) bool {
+	return uf.find(p) == uf.find(q)
+}
+
+func kClusterings(edges EdgeList, numberOfClustersDesired, numberOfNodes int) int {
 	sort.Slice(edges, func(i, j int) bool {
 		return edges[i].cost < edges[j].cost
 	})
-	uf := UnionFind{
-		allNodes: make([]Node, len(edges)), // hmm....
-		groups:   make(map[int]Group),
-	}
-	uf.init(edges)
+	uf := new(UnionFind).init(numberOfNodes)
 
-	clusterAns := 0
-	responseTree := EdgeList{}
-	for i := 1; i < len(edges); i++ {
-		if uf.find(edges[i].node1.vertex) != uf.find(edges[i].node2.vertex) {
-			// fmt.Println(edges[i].node1, edges[i].node2)
-			if uf.groupsSize() == numberOfClustersDesired {
-				clusterAns = edges[i].cost
-				// fmt.Println(uf.groups)
-				// fmt.Println(uf.allNodes)
-				log.Fatal(clusterAns)
-			}
-			// if edges[i].cost == 90 {
-			// 	log.Fatal(edges[i], "and", len(uf.groups))
-			// }
-			responseTree = append(responseTree, edges[i])
-			uf.union(edges[i].node1.vertex, edges[i].node2.vertex)
+	result := 0
+	for i, edge := range edges {
+		if !uf.connected(edge.node1, edge.node2) {
+			uf.union(edge.node1, edge.node2)
+		}
+		if edge.cost == 86 {
+			fmt.Println(edge, i, len(unique(uf.root)), "boiii")
+		}
+		if len(unique(uf.root)) == numberOfClustersDesired {
+			fmt.Println(unique(uf.root), i)
+			result = edge.cost
+			break
 		}
 	}
 
-	return clusterAns
+	return result
+}
+
+func unique(intSlice []int) []int {
+	keys := make(map[int]bool)
+	list := []int{}
+	for _, entry := range intSlice {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return list
 }
 
 func main() {
-	fmt.Println(kClusterings(loadData("./course3/week2/cluster/smallData.txt"), 4))
+	fmt.Println(kClusterings(loadData("./course3/week2/cluster/smallData.txt"), 4, 32))
 }
 
 func loadData(filepath string) EdgeList {
@@ -155,8 +136,8 @@ func parseRowIntoEntry(container *EdgeList, row string) {
 		cost, err := strconv.Atoi(rowSlice[2])
 		check(err)
 		*container = append(*container, Edge{
-			node1: Node{vertex: node1, leader: node1},
-			node2: Node{vertex: node2, leader: node2},
+			node1: node1 - 1,
+			node2: node2 - 1,
 			cost:  cost,
 		})
 	}
