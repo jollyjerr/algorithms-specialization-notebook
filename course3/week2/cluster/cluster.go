@@ -71,6 +71,14 @@ func (uf *UnionFind) connected(p int, q int) bool {
 	return uf.find(p) == uf.find(q)
 }
 
+func (uf *UnionFind) numberOfGroups(size int) int {
+	leaders := make([]int, 0, size)
+	for i := 0; i < size; i++ {
+		leaders = append(leaders, uf.find(i))
+	}
+	return len(unique(leaders))
+}
+
 func kClusterings(edges EdgeList, numberOfClustersDesired, numberOfNodes int) int {
 	sort.Slice(edges, func(i, j int) bool {
 		return edges[i].cost < edges[j].cost
@@ -78,17 +86,13 @@ func kClusterings(edges EdgeList, numberOfClustersDesired, numberOfNodes int) in
 	uf := new(UnionFind).init(numberOfNodes)
 
 	result := 0
-	for i, edge := range edges {
+	for _, edge := range edges {
 		if !uf.connected(edge.node1, edge.node2) {
+			if uf.numberOfGroups(numberOfNodes) == numberOfClustersDesired {
+				result = edge.cost
+				break
+			}
 			uf.union(edge.node1, edge.node2)
-		}
-		if edge.cost == 86 {
-			fmt.Println(edge, i, len(unique(uf.root)), "boiii")
-		}
-		if len(unique(uf.root)) == numberOfClustersDesired {
-			fmt.Println(unique(uf.root), i)
-			result = edge.cost
-			break
 		}
 	}
 
@@ -108,7 +112,7 @@ func unique(intSlice []int) []int {
 }
 
 func main() {
-	fmt.Println(kClusterings(loadData("./course3/week2/cluster/smallData.txt"), 4, 32))
+	fmt.Println(kClusterings(loadData("./course3/week2/cluster/data.txt"), 4, 500))
 }
 
 func loadData(filepath string) EdgeList {
