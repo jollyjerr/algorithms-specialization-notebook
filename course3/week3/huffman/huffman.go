@@ -33,8 +33,8 @@ func byCost(a, b interface{}) int {
 	}
 }
 
-func huffman(elements []int) int {
-	tree := Tree{}
+func huffman(elements []int) (int, int) {
+	counters := make(map[int]int, 0) // Map vertex to count of times merged
 	heap := binaryheap.NewWith(byCost)
 	for _, element := range elements {
 		heap.Push(Element{
@@ -42,7 +42,6 @@ func huffman(elements []int) int {
 			Cost:  element,
 		})
 	}
-	count := 0
 	//-----------------------------------------
 	singleRound := func() {
 		t1, _ := heap.Pop()
@@ -54,33 +53,38 @@ func huffman(elements []int) int {
 			Cost:  t1.(Element).Cost + t2.(Element).Cost,
 		})
 
-		if len(t1.(Element).Nodes) == 1 {
-			tree[t1.(Element).Nodes[0]] = count
+		for _, vertex := range nodes1 {
+			if _, exist := counters[vertex]; !exist {
+				counters[vertex] = 1
+			} else {
+				counters[vertex] = counters[vertex] + 1
+			}
 		}
-		if len(t2.(Element).Nodes) == 1 {
-			tree[t2.(Element).Nodes[0]] = count
-		}
-
-		fmt.Println(t1, t2)
-
-		count++
 	}
 
 	// Build the tree
-	for heap.Size() > 2 {
+	for heap.Size() > 1 {
 		singleRound()
 	}
-	// Reconstruct codes
-	t1, _ := heap.Pop()
-	t2, _ := heap.Pop()
 
-	fmt.Println(t1, t2)
+	return findMinMax(counters)
+}
 
-	return 2
+func findMinMax(counters map[int]int) (int, int) {
+	min := 99999999999
+	max := 0
+	for _, v := range counters {
+		if v < min {
+			min = v
+		} else if v > max {
+			max = v
+		}
+	}
+	return min, max
 }
 
 func main() {
-	fmt.Println(huffman(loadData("./course3/week3/huffman/smallData.txt")))
+	fmt.Println(huffman(loadData("./course3/week3/huffman/data.txt")))
 }
 
 func loadData(filepath string) []int {

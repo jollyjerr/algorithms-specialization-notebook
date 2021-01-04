@@ -46,4 +46,6 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 
 [Max-Spacing k-clusterings via kruskal's algorithm](./course3/week2/cluster/cluster.go)
 
+[Huffman optimal binary prefix-free encoding](./course3/week3/huffman/huffman.go)
+
 ### Course 4 - Shortest Paths Revisited, NP-Complete Problems and What To Do About Them
