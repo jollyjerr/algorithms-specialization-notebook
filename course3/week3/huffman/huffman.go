@@ -10,9 +10,6 @@ import (
 	"github.com/emirpasic/gods/trees/binaryheap"
 )
 
-// Tree is a tree sorta
-type Tree map[int]int
-
 // Element is an element
 type Element struct {
 	Nodes []int
