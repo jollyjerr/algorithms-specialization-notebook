@@ -13,34 +13,68 @@ import (
 // Tree is a tree sorta
 type Tree map[int]int
 
+// Element is an element
+type Element struct {
+	Nodes []int
+	Cost  int
+}
+
+func byCost(a, b interface{}) int {
+	c1 := a.(Element)
+	c2 := b.(Element)
+
+	switch {
+	case c1.Cost > c2.Cost:
+		return 1
+	case c1.Cost < c2.Cost:
+		return -1
+	default:
+		return 0
+	}
+}
+
 func huffman(elements []int) int {
 	tree := Tree{}
-	heap := binaryheap.NewWithIntComparator()
+	heap := binaryheap.NewWith(byCost)
 	for _, element := range elements {
-		heap.Push(element)
+		heap.Push(Element{
+			Nodes: []int{element},
+			Cost:  element,
+		})
 	}
 	count := 0
 	//-----------------------------------------
 	singleRound := func() {
 		t1, _ := heap.Pop()
 		t2, _ := heap.Pop()
-		heap.Push(t1.(int) + t2.(int))
+		nodes1 := t1.(Element).Nodes
+		nodes1 = append(nodes1, t2.(Element).Nodes...)
+		heap.Push(Element{
+			Nodes: nodes1,
+			Cost:  t1.(Element).Cost + t2.(Element).Cost,
+		})
 
-		if _, exist := tree[t1.(int)]; !exist {
-			tree[t1.(int)] = count
+		if len(t1.(Element).Nodes) == 1 {
+			tree[t1.(Element).Nodes[0]] = count
 		}
-		if _, exist := tree[t2.(int)]; !exist {
-			tree[t2.(int)] = count
+		if len(t2.(Element).Nodes) == 1 {
+			tree[t2.(Element).Nodes[0]] = count
 		}
+
+		fmt.Println(t1, t2)
 
 		count++
-
-		fmt.Println(tree)
 	}
 
+	// Build the tree
 	for heap.Size() > 2 {
 		singleRound()
 	}
+	// Reconstruct codes
+	t1, _ := heap.Pop()
+	t2, _ := heap.Pop()
+
+	fmt.Println(t1, t2)
 
 	return 2
 }
