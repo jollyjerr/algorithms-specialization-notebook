@@ -48,4 +48,6 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 
 [Huffman optimal binary prefix-free encoding](./course3/week3/huffman/huffman.go)
 
+[Max weight independent set of a path graph](./course3/week3/maxWeightIndependentSet/mwis.go)
+
 ### Course 4 - Shortest Paths Revisited, NP-Complete Problems and What To Do About Them
