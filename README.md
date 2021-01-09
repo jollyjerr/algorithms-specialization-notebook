@@ -50,4 +50,6 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 
 [Max weight independent set of a path graph](./course3/week3/maxWeightIndependentSet/mwis.go)
 
+[Knapsack problem](./course3/week4/knapsack/knapsack.go)
+
 ### Course 4 - Shortest Paths Revisited, NP-Complete Problems and What To Do About Them
