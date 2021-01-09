@@ -39,22 +39,6 @@ func Knapsack(sack knapsack, items []item) int {
 		}
 
 	}
-	// for i, v := range items {
-	// 	if i != 0 {
-	// 		for x := 0; x < sack.size; x++ {
-	// 			if v.weight > x {
-	// 				A[i][x] = A[i-1][x]
-	// 			} else {
-	// 				if newVal := (A[i-1][x-v.weight]) + v.value; newVal > A[i-1][x] {
-	// 					fmt.Println(v)
-	// 					A[i][x] = newVal
-	// 				} else {
-	// 					A[i][x] = A[i-1][x]
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	return A[sack.numOfItems][sack.size]
 }
