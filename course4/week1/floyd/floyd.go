@@ -16,8 +16,16 @@ type Edge struct {
 	length int
 }
 
-func floyd(edges []Edge) int {
+// ProbSize is used to define the scope of the all pairs problem
+type ProbSize struct {
+	numVert  int
+	numEdges int
+}
+
+func floyd(edges []Edge, probSize ProbSize) int {
+	fmt.Println(probSize)
 	fmt.Println(edges)
+
 	return 2
 }
 
@@ -25,15 +33,25 @@ func main() {
 	fmt.Println(floyd(loadData("./course4/week1/floyd/smallData.txt")))
 }
 
-func loadData(filepath string) []Edge {
+func loadData(filepath string) ([]Edge, ProbSize) {
 	items := make([]Edge, 0)
 	f, err := os.Open(filepath)
 	check(err)
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
 	row := 1
+	probSize := ProbSize{}
 	for scanner.Scan() {
 		if row == 1 {
+			rowSlice := strings.Fields(scanner.Text())
+			numVert, err := strconv.Atoi(rowSlice[0])
+			check(err)
+			numEdges, err := strconv.Atoi(rowSlice[1])
+			check(err)
+			probSize = ProbSize{
+				numVert,
+				numEdges,
+			}
 			row++
 			continue
 		}
@@ -42,7 +60,7 @@ func loadData(filepath string) []Edge {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	return items
+	return items, probSize
 }
 
 func parseRowIntoEntry(items *[]Edge, row string) {
