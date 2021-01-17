@@ -9,6 +9,10 @@ import (
 	"strings"
 )
 
+const (
+	inf = int(^uint(0) >> 1)
+)
+
 // Edge is an edge dog
 type Edge struct {
 	tail   int
@@ -23,10 +27,58 @@ type ProbSize struct {
 }
 
 func floyd(edges []Edge, probSize ProbSize) int {
-	fmt.Println(probSize)
-	fmt.Println(edges)
+	A := buildContainer(probSize) // 3D array (indexed by i,j,k)
+
+	// Pre-process for base cases
+	for i := 0; i < probSize.numVert; i++ {
+		for j := 0; j < probSize.numVert; j++ {
+			if i == j {
+				A[i][j][0] = 0
+			} else {
+				for _, edge := range edges {
+					if edge.tail == i && edge.head == j { //|| (edge.tail == j && edge.head == i) ????
+						fmt.Println(edge.length)
+						A[i][j][0] = edge.length
+					} else {
+						A[i][j][0] = inf
+					}
+				}
+			}
+		}
+	}
+
+	// Fill the remaining table
+	for k := 1; k < probSize.numVert; k++ {
+		for i := 1; i < probSize.numVert; i++ {
+			for j := 1; j < probSize.numVert; j++ {
+				A[i][j][k] = minOfStep(A, i, j, k)
+			}
+		}
+	}
+
+	fmt.Println(A)
 
 	return 2
+}
+
+func buildContainer(probSize ProbSize) [][][]int {
+	A := make([][][]int, probSize.numVert)
+	for i := 0; i < probSize.numVert; i++ {
+		A[i] = make([][]int, probSize.numVert)
+		for j := 0; j < probSize.numVert; j++ {
+			A[i][j] = make([]int, probSize.numVert)
+		}
+	}
+	return A
+}
+
+func minOfStep(A [][][]int, i, j, k int) int {
+	inherit := A[i][j][k-1]
+	adopt := A[i][k][k-1] + A[k][j][k-1]
+	if inherit > adopt {
+		return adopt
+	}
+	return inherit
 }
 
 func main() {
@@ -72,9 +124,9 @@ func parseRowIntoEntry(items *[]Edge, row string) {
 	length, err := strconv.Atoi(rowSlice[2])
 	check(err)
 	*items = append(*items, Edge{
-		tail,
-		head,
-		length,
+		tail:   tail - 1,
+		head:   head - 1,
+		length: length,
 	})
 }
 
