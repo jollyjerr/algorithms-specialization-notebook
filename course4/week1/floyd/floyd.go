@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	inf = int(^uint(0) >> 1)
+	inf = 4294967295
 )
 
 // Edge is an edge dog
@@ -26,63 +26,85 @@ type ProbSize struct {
 	numEdges int
 }
 
-func floyd(edges []Edge, probSize ProbSize) int {
-	A := buildContainer(probSize) // 3D array (indexed by i,j,k)
+// ret -> (smallest smallest path, negative cycle?)
+func floyd(edges []Edge, probSize ProbSize) (int, bool) {
+	A := buildContainer(probSize)
+	vertices := getVertices(edges, probSize.numVert)
 
-	// Pre-process for base cases
-	for i := 0; i < probSize.numVert; i++ {
-		for j := 0; j < probSize.numVert; j++ {
-			if i == j {
-				A[i][j][0] = 0
-			} else {
-				for _, edge := range edges {
-					if edge.tail == i && edge.head == j { //|| (edge.tail == j && edge.head == i) ????
-						fmt.Println(edge.length)
-						A[i][j][0] = edge.length
-					} else {
-						A[i][j][0] = inf
-					}
+	for _, edge := range edges {
+		A[edge.tail][edge.head] = edge.length
+	}
+	for _, vert := range vertices {
+		A[vert][vert] = 0
+	}
+
+	for k := 0; k < probSize.numVert; k++ {
+		for i := 0; i < probSize.numVert; i++ {
+			for j := 0; j < probSize.numVert; j++ {
+				if A[i][j] > (A[i][k] + A[k][j]) {
+					A[i][j] = (A[i][k] + A[k][j])
 				}
 			}
 		}
 	}
 
-	// Fill the remaining table
-	for k := 1; k < probSize.numVert; k++ {
-		for i := 1; i < probSize.numVert; i++ {
-			for j := 1; j < probSize.numVert; j++ {
-				A[i][j][k] = minOfStep(A, i, j, k)
-			}
+	// check for neg cycle
+	for i := 0; i < probSize.numVert; i++ {
+		if A[i][i] < 0 {
+			return inf, true
 		}
 	}
 
-	fmt.Println(A)
-
-	return 2
+	return findAnswer(A), false
 }
 
-func buildContainer(probSize ProbSize) [][][]int {
-	A := make([][][]int, probSize.numVert)
+func buildContainer(probSize ProbSize) [][]int {
+	A := make([][]int, probSize.numVert)
 	for i := 0; i < probSize.numVert; i++ {
-		A[i] = make([][]int, probSize.numVert)
+		A[i] = make([]int, probSize.numVert)
+	}
+	for i := 0; i < probSize.numVert; i++ {
 		for j := 0; j < probSize.numVert; j++ {
-			A[i][j] = make([]int, probSize.numVert)
+			A[i][j] = inf
 		}
 	}
 	return A
 }
 
-func minOfStep(A [][][]int, i, j, k int) int {
-	inherit := A[i][j][k-1]
-	adopt := A[i][k][k-1] + A[k][j][k-1]
-	if inherit > adopt {
-		return adopt
+func getVertices(edges []Edge, size int) []int {
+	unique := make(map[int]int, 0)
+	res := make([]int, 0)
+	for _, edge := range edges {
+		tail := edge.tail
+		head := edge.head
+		if _, exist := unique[tail]; !exist {
+			unique[tail] = tail
+			res = append(res, tail)
+		}
+		if _, exist := unique[head]; !exist {
+			unique[head] = head
+			res = append(res, head)
+		}
 	}
-	return inherit
+	return res
+}
+
+func findAnswer(A [][]int) int {
+	min := inf
+	for i := 0; i < len(A); i++ {
+		for j := 0; j < len(A[i]); j++ {
+			if guess := A[i][j]; guess < min {
+				min = guess
+			}
+		}
+	}
+	return min
 }
 
 func main() {
-	fmt.Println(floyd(loadData("./course4/week1/floyd/smallData.txt")))
+	fmt.Println(floyd(loadData("./course4/week1/floyd/data1.txt")))
+	fmt.Println(floyd(loadData("./course4/week1/floyd/data2.txt")))
+	fmt.Println(floyd(loadData("./course4/week1/floyd/data3.txt")))
 }
 
 func loadData(filepath string) ([]Edge, ProbSize) {
