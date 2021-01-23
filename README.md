@@ -55,3 +55,5 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 ### Course 4 - Shortest Paths Revisited, NP-Complete Problems and What To Do About Them
 
 [Floyd-Warshall](./course4/week1/floyd/floyd.go)
+
+[Traveling Salesman Problem](./course4/week2/tsp/tsp.go)

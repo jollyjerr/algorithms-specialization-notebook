@@ -2,8 +2,11 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 )
 
 // Node is a city
@@ -21,6 +24,14 @@ type Edge struct {
 
 // Graph is a graph
 type Graph map[int][]Edge
+
+func tsp(graph Graph) int {
+	return 3
+}
+
+func main() {
+	fmt.Println(tsp(loadData("course4/week2/tsp/data.txt")))
+}
 
 func loadData(filepath string) Graph {
 	nodes := make([]Node, 0)
@@ -40,15 +51,24 @@ func loadData(filepath string) Graph {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println(nodes)
+
 	return graph
 }
 
 func parseRowIntoEntry(items *[]Node, index *int, row string) {
-	// rowSlice := strings.Fields(row)
-	// X, err := strconv.Atoi(rowSlice[0])
-	// check(err)
-	// Y, err := strconv.Atoi(rowSlice[1])
-	// check(err)
+	rowSlice := strings.Fields(row)
+	X, err := strconv.Atoi(rowSlice[0])
+	check(err)
+	Y, err := strconv.Atoi(rowSlice[1])
+	check(err)
+
+	*items = append(*items, Node{
+		index: *index,
+		X:     X,
+		Y:     Y,
+	})
 
 	*index++
 }
