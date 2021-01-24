@@ -56,4 +56,4 @@ There are 4 courses (quarters from the corresponding university course). Each ha
 
 [Floyd-Warshall](./course4/week1/floyd/floyd.go)
 
-[Traveling Salesman Problem](./course4/week2/tsp/tsp.go)
+[Traveling Salesman Problem](./course4/week3/tsp/tsp.go)
